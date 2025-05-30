@@ -10,11 +10,27 @@
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+
+    // 🔄 Suporte a preflight request (CORS)
+    if (request.method === 'OPTIONS') {
+      return new Response(null, {
+        status: 204,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, HEAD, POST, OPTIONS',
+          'Access-Control-Allow-Headers': '*',
+        },
+      });
+    }
+
     const targetPath = url.searchParams.get("url");
 
     if (!targetPath) {
       console.log("❌ Missing `url` parameter");
-      return new Response("Missing `url` query parameter.", { status: 400 });
+      return new Response("Missing `url` query parameter.", {
+        status: 400,
+        headers: { "Access-Control-Allow-Origin": "*" },
+      });
     }
 
     const targetUrl = new URL(targetPath);
@@ -48,9 +64,10 @@ export default {
 
     } catch (error) {
       console.log("💥 Error fetching from Google Maps:", error);
-      return new Response("Internal error", { status: 500 });
+      return new Response("Internal error", {
+        status: 500,
+        headers: { "Access-Control-Allow-Origin": "*" },
+      });
     }
   },
 };
-
-
