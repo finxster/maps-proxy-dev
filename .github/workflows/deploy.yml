@@ -36,10 +36,10 @@ jobs:
 
           if [ "$BRANCH_NAME" = "develop" ]; then
             echo "Deploying to DEV environment..."
-            wrangler deploy --env dev || true
+            wrangler deploy --env dev
           elif [ "$BRANCH_NAME" = "main" ]; then
             echo "Deploying to PROD environment..."
-            wrangler deploy --env prod || true
+            wrangler deploy --env prod
           else
             echo "Branch not configured for deployment. Skipping."
           fi
