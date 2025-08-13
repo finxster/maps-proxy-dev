@@ -1,0 +1,41 @@
+name: Deploy Cloudflare Worker
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install Wrangler
+        run: npm install -g wrangler
+
+      - name: Configure Cloudflare API token
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+        run: echo "Using Cloudflare API Token"
+
+      - name: Deploy Worker
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+        run: |
+          if [ "${GITHUB_REF##*/}" = "develop" ]; then
+            wrangler deploy --env dev
+          elif [ "${GITHUB_REF##*/}" = "main" ]; then
+            wrangler deploy --env prod
+          else
+            echo "Branch not configured for deployment"
+          fi
+
