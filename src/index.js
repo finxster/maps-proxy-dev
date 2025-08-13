@@ -10,6 +10,7 @@
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    console.log("Original request:", url.toString());
 
     // 🔄 Suporte a preflight request (CORS)
     if (request.method === 'OPTIONS') {
@@ -45,8 +46,9 @@ export default {
       });
     }
 
-    // 🔑 Adiciona a API Key nos parâmetros da URL
-    targetUrl.searchParams.set("key", env.GOOGLE_MAPS_API_KEY);
+    // 🔑 Remove dummy key existente e adiciona a verdadeira
+    targetUrl.searchParams.delete("key");
+    targetUrl.searchParams.append("key", env.GOOGLE_MAPS_API_KEY);
 
     console.log("🌍 Final Request URL:", targetUrl.toString());
 
