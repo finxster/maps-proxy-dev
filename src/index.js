@@ -34,7 +34,26 @@ export default {
       });
     }
 
-    const targetUrl = new URL(targetPath);
+    // 🔹 Separar base da query para preservar todos os parâmetros
+    const questionMarkIndex = targetPath.indexOf('?');
+    let baseUrl = targetPath;
+    let queryString = '';
+
+    if (questionMarkIndex >= 0) {
+      baseUrl = targetPath.slice(0, questionMarkIndex);
+      queryString = targetPath.slice(questionMarkIndex + 1);
+    }
+
+    const targetUrl = new URL(baseUrl);
+    if (queryString) {
+      const params = new URLSearchParams(queryString);
+      // remove qualquer key antiga e adiciona a do Worker
+      params.delete('key');
+      params.set('key', env.GOOGLE_MAPS_API_KEY);
+      targetUrl.search = params.toString();
+    } else {
+      targetUrl.searchParams.set('key', env.GOOGLE_MAPS_API_KEY);
+    }
 
     // ✅ Verifica se o domínio é permitido
     const allowedHost = "googleapis.com";
@@ -45,10 +64,6 @@ export default {
         headers: { "Access-Control-Allow-Origin": "*" },
       });
     }
-
-    // 🔑 Remove dummy key existente e adiciona a verdadeira
-    targetUrl.searchParams.delete("key");
-    targetUrl.searchParams.append("key", env.GOOGLE_MAPS_API_KEY);
 
     console.log("🌍 Final Request URL:", targetUrl.toString());
 
