@@ -10,6 +10,12 @@ O código-fonte é o mesmo para ambos; a diferença principal é a variável sec
 
 ---
 
+## 📋 Diagrama de arquitetura
+
+![Fluxo do Maps Proxy](maps_proxy_diagram.png)
+
+---
+
 ## 📦 Pré-requisitos
 
 - Node.js 18+
