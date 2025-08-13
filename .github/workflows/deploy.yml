@@ -24,12 +24,12 @@ jobs:
 
       - name: Configure Cloudflare API token
         env:
-          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: echo "Cloudflare API Token configured"
 
       - name: Deploy Worker
         env:
-          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
           BRANCH_NAME=${GITHUB_REF##*/}
           echo "Detected branch: $BRANCH_NAME"
