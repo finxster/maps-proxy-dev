@@ -17,25 +17,29 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
 
       - name: Install Wrangler
         run: npm install -g wrangler
 
       - name: Configure Cloudflare API token
         env:
-          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
-        run: echo "Using Cloudflare API Token"
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: echo "Cloudflare API Token configured"
 
       - name: Deploy Worker
         env:
-          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
-          if [ "${GITHUB_REF##*/}" = "develop" ]; then
+          BRANCH_NAME=${GITHUB_REF##*/}
+          echo "Detected branch: $BRANCH_NAME"
+
+          if [ "$BRANCH_NAME" = "develop" ]; then
+            echo "Deploying to DEV environment..."
             wrangler deploy --env dev
-          elif [ "${GITHUB_REF##*/}" = "main" ]; then
+          elif [ "$BRANCH_NAME" = "main" ]; then
+            echo "Deploying to PROD environment..."
             wrangler deploy --env prod
           else
-            echo "Branch not configured for deployment"
+            echo "Branch not configured for deployment. Skipping."
           fi
-
