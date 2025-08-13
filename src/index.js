@@ -23,11 +23,11 @@ export default {
       });
     }
 
-    // 🚨 Extrai e decodifica a URL do path (removendo a primeira barra)
-    const targetPath = decodeURIComponent(url.pathname.slice(1));
+    const targetPath = url.searchParams.get("url");
 
-    if (!targetPath.startsWith("http")) {
-      return new Response("URL inválida. Esperado path como: /https://...", {
+    if (!targetPath) {
+      console.log("❌ Missing `url` parameter");
+      return new Response("Missing `url` query parameter.", {
         status: 400,
         headers: { "Access-Control-Allow-Origin": "*" },
       });
@@ -35,19 +35,10 @@ export default {
 
     const targetUrl = new URL(targetPath);
 
-    // ✅ Verifica se o domínio é permitido
-    const allowedHost = "googleapis.com";
-    if (!targetUrl.hostname.endsWith(allowedHost)) {
-      console.log("❌ Host não permitido:", targetUrl.hostname);
-      return new Response(`Apenas domínios terminando em "${allowedHost}" são permitidos.`, {
-        status: 403,
-        headers: { "Access-Control-Allow-Origin": "*" },
-      });
-    }
-
-    // 🔑 Adiciona a API Key nos parâmetros da URL
+    // Anexa a API Key
     targetUrl.searchParams.set("key", env.GOOGLE_MAPS_API_KEY);
 
+    // Log da chave e da URL final
     console.log("🔑 API Key:", env.GOOGLE_MAPS_API_KEY);
     console.log("🌍 Final Request URL:", targetUrl.toString());
 
